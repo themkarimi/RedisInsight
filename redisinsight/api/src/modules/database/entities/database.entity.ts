@@ -290,4 +290,14 @@ export class DatabaseEntity {
   @Expose()
   @Column({ nullable: true, default: Encoding.UNICODE })
   keyNameFormat: string;
+
+  @Expose()
+  @Column({ nullable: true, default: '[]' })
+  @DataAsJsonString()
+  allowedGroups: string;
+
+  @Expose()
+  @Column({ nullable: true, default: '[]' })
+  @DataAsJsonString()
+  allowedRoles: string;
 }
