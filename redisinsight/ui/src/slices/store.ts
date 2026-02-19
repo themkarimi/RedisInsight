@@ -57,6 +57,7 @@ import rdiStatisticsReducer from './rdi/statistics'
 import aiAssistantReducer from './panels/aiAssistant'
 import appDbSettingsReducer from './app/db-settings'
 import tagsReducer from './instances/tags'
+import keycloakAuthReducer from './auth/keycloak'
 
 const riConfig = getConfig()
 
@@ -141,6 +142,7 @@ export const rootReducer = combineReducers({
     testConnections: rdiTestConnectionsReducer,
     statistics: rdiStatisticsReducer,
   }),
+  keycloakAuth: keycloakAuthReducer,
 })
 
 const store = configureStore({

@@ -361,4 +361,24 @@ export class Database {
   @IsBoolean()
   @IsOptional()
   isPreSetup?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Keycloak groups allowed to access this database instance.',
+    type: [String],
+  })
+  @Expose()
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  allowedGroups?: string[] = [];
+
+  @ApiPropertyOptional({
+    description: 'Keycloak roles allowed to access this database instance.',
+    type: [String],
+  })
+  @Expose()
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  allowedRoles?: string[] = [];
 }

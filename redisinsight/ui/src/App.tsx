@@ -23,6 +23,7 @@ import MainComponent from './components/main/MainComponent'
 import MonacoEnvironmentInitializer from './components/MonacoEnvironmentInitializer/MonacoEnvironmentInitializer'
 import GlobalDialogs from './components/global-dialogs'
 import NotFoundErrorPage from './pages/not-found-error/NotFoundErrorPage'
+import KeycloakCallbackPage from './pages/keycloak-callback/KeycloakCallbackPage'
 
 import themeDark from './styles/themes/dark_theme/darkTheme.scss?inline'
 import themeLight from './styles/themes/light_theme/lightTheme.scss?inline'
@@ -55,6 +56,11 @@ const App = ({ children }: { children?: ReactElement[] }) => {
       <MonacoEnvironmentInitializer />
       <Switch>
         <Route exact path={Pages.notFound} component={NotFoundErrorPage} />
+        <Route
+          exact
+          path="/keycloak-callback"
+          component={KeycloakCallbackPage}
+        />
         <Route
           path="*"
           render={() => (

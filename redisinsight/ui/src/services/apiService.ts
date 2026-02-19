@@ -12,6 +12,11 @@ import { logoutUserAction } from 'uiSrc/slices/oauth/cloud'
 import { setConnectivityError } from 'uiSrc/slices/app/connectivity'
 import { getConfig } from 'uiSrc/config'
 import ApiErrors from 'uiSrc/constants/apiErrors'
+import {
+  getStoredAccessToken,
+  isKeycloakEnabled,
+  redirectToKeycloakLogin,
+} from './keycloakAuthService'
 
 const riConfig = getConfig()
 
@@ -57,6 +62,14 @@ export const requestInterceptor = (config: InternalAxiosRequestConfig) => {
     if (window.windowId) {
       config.headers[CustomHeaders.WindowId] = window.windowId
     }
+
+    // Attach Keycloak Bearer token when Keycloak is enabled
+    if (isKeycloakEnabled()) {
+      const token = getStoredAccessToken()
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`
+      }
+    }
   }
 
   return config
@@ -84,6 +97,18 @@ export const hostedAuthInterceptor = (error: AxiosError) => {
     window.location.href = noPermission
       ? riConfig.app.returnUrlBase!
       : `${riConfig.app.unauthenticatedRedirect}${window.location.pathname}`
+  }
+  return Promise.reject(error)
+}
+
+/**
+ * When Keycloak authentication is enabled, redirect to the Keycloak login page
+ * on a 401 Unauthorized response. 403 Forbidden is left to the UI to display.
+ */
+export const keycloakAuthInterceptor = (error: AxiosError) => {
+  const { response } = error
+  if (isKeycloakEnabled() && response?.status === 401) {
+    redirectToKeycloakLogin()
   }
   return Promise.reject(error)
 }
@@ -153,6 +178,11 @@ mutableAxiosInstance.interceptors.request.use(requestInterceptor, (error) =>
 mutableAxiosInstance.interceptors.response.use(undefined, cloudAuthInterceptor)
 
 mutableAxiosInstance.interceptors.response.use(undefined, hostedAuthInterceptor)
+
+mutableAxiosInstance.interceptors.response.use(
+  undefined,
+  keycloakAuthInterceptor,
+)
 
 mutableAxiosInstance.interceptors.response.use(
   undefined,
