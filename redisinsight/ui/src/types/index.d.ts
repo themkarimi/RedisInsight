@@ -19,6 +19,9 @@ declare global {
     windowId?: string
     MonacoEnvironment: Environment
     readonly __RI_PROXY_PATH__: string
+    __RI_KEYCLOAK_URL__?: string
+    __RI_KEYCLOAK_REALM__?: string
+    __RI_KEYCLOAK_CLIENT_ID__?: string
   }
 }
 

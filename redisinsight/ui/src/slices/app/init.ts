@@ -3,8 +3,16 @@ import { fetchCsrfTokenAction } from 'uiSrc/slices/app/csrf'
 import { fetchFeatureFlags } from 'uiSrc/slices/app/features'
 import { FeatureFlags } from 'uiSrc/constants'
 import { fetchCloudUserProfile } from 'uiSrc/slices/user/cloud-user-profile'
-import { isKeycloakEnabled } from 'uiSrc/services/keycloakAuthService'
-import { setKeycloakEnabled } from 'uiSrc/slices/auth/keycloak'
+import {
+  isKeycloakEnabled,
+  getStoredAccessToken,
+  parseJwtPayload,
+  clearStoredTokens,
+} from 'uiSrc/services/keycloakAuthService'
+import {
+  setKeycloakEnabled,
+  setKeycloakAuthenticated,
+} from 'uiSrc/slices/auth/keycloak'
 import { AppDispatch, RootState } from '../store'
 
 export const STATUS_INITIAL = 'initial'
@@ -81,6 +89,40 @@ export function initializeAppAction(
     try {
       dispatch(initializeAppState())
       dispatch(setKeycloakEnabled(isKeycloakEnabled()))
+
+      // Restore authenticated state from stored Keycloak token on page refresh
+      if (isKeycloakEnabled()) {
+        const storedToken = getStoredAccessToken()
+        if (storedToken) {
+          try {
+            const payload = parseJwtPayload(storedToken)
+            const exp = payload.exp as number | undefined
+            if (exp && exp * 1000 > Date.now()) {
+              const realmAccess = payload.realm_access as
+                | { roles?: string[] }
+                | undefined
+              dispatch(
+                setKeycloakAuthenticated({
+                  sub: payload.sub as string,
+                  email: payload.email as string | undefined,
+                  preferredUsername: payload.preferred_username as
+                    | string
+                    | undefined,
+                  roles: realmAccess?.roles ?? [],
+                  groups: Array.isArray(payload.groups)
+                    ? (payload.groups as string[])
+                    : [],
+                }),
+              )
+            } else {
+              clearStoredTokens()
+            }
+          } catch {
+            clearStoredTokens()
+          }
+        }
+      }
+
       await dispatch(
         fetchCsrfTokenAction(undefined, () => {
           throw new Error(FAILED_TO_FETCH_CSRF_TOKEN_ERROR)
