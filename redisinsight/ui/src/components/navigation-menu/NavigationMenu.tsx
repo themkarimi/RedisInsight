@@ -30,8 +30,10 @@ import styles from './styles.module.scss'
 
 const NavigationMenu = () => {
   const { isRdiWorkspace, publicRoutes, highlightedPages } = useNavigation()
-  const { isEnabled: isKeycloakEnabled, isAuthenticated: isKeycloakAuthenticated } =
-    useSelector(keycloakAuthSelector)
+  const {
+    isEnabled: isKeycloakEnabled,
+    isAuthenticated: isKeycloakAuthenticated,
+  } = useSelector(keycloakAuthSelector)
 
   const renderPublicNavItem = (nav: INavigations) => {
     const fragment = (

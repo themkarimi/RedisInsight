@@ -36,10 +36,7 @@ const KeycloakLoginPage = () => {
               {error}
             </Text>
           )}
-          <PrimaryButton
-            onClick={handleLogin}
-            data-testid="keycloak-login-btn"
-          >
+          <PrimaryButton onClick={handleLogin} data-testid="keycloak-login-btn">
             Sign in with SSO
           </PrimaryButton>
         </Col>

@@ -47,8 +47,10 @@ const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
 )
 const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
-  const { isEnabled: isKeycloakEnabled, isAuthenticated: isKeycloakAuthenticated } =
-    useSelector(keycloakAuthSelector)
+  const {
+    isEnabled: isKeycloakEnabled,
+    isAuthenticated: isKeycloakAuthenticated,
+  } = useSelector(keycloakAuthSelector)
   useEffect(() => {
     if (!serverLoading) {
       removePagePlaceholder()
@@ -65,11 +67,7 @@ const App = ({ children }: { children?: ReactElement[] }) => {
           path="/keycloak-callback"
           component={KeycloakCallbackPage}
         />
-        <Route
-          exact
-          path="/keycloak-login"
-          component={KeycloakLoginPage}
-        />
+        <Route exact path="/keycloak-login" component={KeycloakLoginPage} />
         <Route
           path="*"
           render={() => {
