@@ -75,7 +75,7 @@ export class KeycloakService {
 
   private async getSigningKey(token: string): Promise<crypto.KeyObject> {
     const header = this.decodeHeader(token);
-    const kid: string = header?.kid ?? '';
+    const kid: string = (header?.kid as string) ?? '';
 
     // Try cache first
     const now = Date.now();
