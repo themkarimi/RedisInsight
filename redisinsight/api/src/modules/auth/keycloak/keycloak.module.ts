@@ -51,7 +51,7 @@ export class KeycloakModule implements NestModule {
       return;
     }
 
-    consumer.apply(KeycloakJwtMiddleware).forRoutes('*');
-    consumer.apply(KeycloakRbacMiddleware).forRoutes('*');
+    consumer.apply(KeycloakJwtMiddleware).forRoutes('/api/{*splat}');
+    consumer.apply(KeycloakRbacMiddleware).forRoutes('/api/{*splat}');
   }
 }
