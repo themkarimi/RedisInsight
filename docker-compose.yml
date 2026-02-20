@@ -1,0 +1,55 @@
+services:
+  # keycloak:
+  #   image: quay.io/keycloak/keycloak:26.0
+  #   command: start-dev
+  #   environment:
+  #     KEYCLOAK_ADMIN: admin
+  #     KEYCLOAK_ADMIN_PASSWORD: admin
+  #   ports:
+  #     - "8080:8080"
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "curl -sf http://localhost:8080/health/ready || exit 1"]
+  #     interval: 15s
+  #     timeout: 5s
+  #     retries: 10
+  #     start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  redisinsight:
+    image: redisinsight
+    ports:
+      - "5540:5540"
+    volumes:
+      - redisinsight-data:/data
+    environment:
+      NODE_ENV: production
+      RI_SERVE_STATICS: "true"
+      RI_BUILD_TYPE: DOCKER_ON_PREMISE
+      RI_APP_FOLDER_ABSOLUTE_PATH: /data
+
+      # --- Keycloak OIDC (all three required to enable auth) ---
+      KEYCLOAK_URL: https://iam.khadg.com
+      KEYCLOAK_REALM: bitpin-tech-iam
+      KEYCLOAK_CLIENT_ID: redisinsight
+      # KEYCLOAK_CLIENT_SECRET: change-me          # only for confidential clients
+      # KEYCLOAK_JWKS_URL: <custom-url>             # defaults to {URL}/realms/{REALM}/protocol/openid-connect/certs
+    depends_on:
+      redis:
+        condition: service_healthy
+    # healthcheck:
+    #   test: ["CMD-SHELL", "curl -sf http://localhost:5540/api/health || exit 1"]
+    #   interval: 15s
+    #   timeout: 5s
+    #   retries: 5
+
+volumes:
+  redisinsight-data:
