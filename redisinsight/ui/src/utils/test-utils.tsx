@@ -74,6 +74,7 @@ import { apiService } from 'uiSrc/services'
 import { initialState as initialStateAppConnectivity } from 'uiSrc/slices/app/connectivity'
 import { initialState as initialStateAppDbSettings } from 'uiSrc/slices/app/db-settings'
 import { initialState as initialStateAppInit } from 'uiSrc/slices/app/init'
+import { initialState as initialStateKeycloakAuth } from 'uiSrc/slices/auth/keycloak'
 import * as appFeaturesSlice from 'uiSrc/slices/app/features'
 import { setStoreRef } from './test-store'
 
@@ -165,6 +166,7 @@ const initialStateDefault: RootState = {
     statistics: cloneDeep(initialStateRdiStatistics),
     testConnections: cloneDeep(initialStateRdiTestConnections),
   },
+  keycloakAuth: cloneDeep(initialStateKeycloakAuth),
 }
 
 // mocked store

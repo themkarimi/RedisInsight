@@ -14,12 +14,12 @@ export interface KeycloakClientConfig {
 
 const getConfig = (): KeycloakClientConfig | null => {
   const win = window as any
-  const url = win.__RI_KEYCLOAK_URL__ || import.meta?.env?.VITE_KEYCLOAK_URL
+  const url = win.__RI_KEYCLOAK_URL__ || process.env.VITE_KEYCLOAK_URL
   const realm =
-    win.__RI_KEYCLOAK_REALM__ || import.meta?.env?.VITE_KEYCLOAK_REALM
+    win.__RI_KEYCLOAK_REALM__ || process.env.VITE_KEYCLOAK_REALM
   const clientId =
     win.__RI_KEYCLOAK_CLIENT_ID__ ||
-    import.meta?.env?.VITE_KEYCLOAK_CLIENT_ID
+    process.env.VITE_KEYCLOAK_CLIENT_ID
 
   if (!url || !realm || !clientId) {
     return null

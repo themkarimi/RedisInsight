@@ -3,6 +3,8 @@ import { fetchCsrfTokenAction } from 'uiSrc/slices/app/csrf'
 import { fetchFeatureFlags } from 'uiSrc/slices/app/features'
 import { FeatureFlags } from 'uiSrc/constants'
 import { fetchCloudUserProfile } from 'uiSrc/slices/user/cloud-user-profile'
+import { isKeycloakEnabled } from 'uiSrc/services/keycloakAuthService'
+import { setKeycloakEnabled } from 'uiSrc/slices/auth/keycloak'
 import { AppDispatch, RootState } from '../store'
 
 export const STATUS_INITIAL = 'initial'
@@ -78,6 +80,7 @@ export function initializeAppAction(
   return async (dispatch: AppDispatch) => {
     try {
       dispatch(initializeAppState())
+      dispatch(setKeycloakEnabled(isKeycloakEnabled()))
       await dispatch(
         fetchCsrfTokenAction(undefined, () => {
           throw new Error(FAILED_TO_FETCH_CSRF_TOKEN_ERROR)

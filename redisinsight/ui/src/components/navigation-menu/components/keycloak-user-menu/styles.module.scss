@@ -1,0 +1,26 @@
+.popoverWrapper {
+  min-width: 240px !important;
+
+  :global([class*='Composestyle__Arrow-RedisUI__']) {
+    color: var(--euiTooltipBackgroundColor) !important;
+  }
+}
+
+.popover {
+  padding: 12px 16px;
+}
+
+.userInfo {
+  margin-bottom: 12px;
+}
+
+.logoutLink {
+  cursor: pointer;
+  font-size: 13px !important;
+  text-decoration: none !important;
+  color: var(--externalLinkColor) !important;
+
+  &:hover {
+    text-decoration: underline !important;
+  }
+}

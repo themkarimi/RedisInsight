@@ -1,9 +1,10 @@
 import React, { ReactElement, useEffect } from 'react'
 import { Provider, useSelector } from 'react-redux'
 
-import { Route, Switch } from 'react-router-dom'
+import { Redirect, Route, Switch } from 'react-router-dom'
 import { store } from 'uiSrc/slices/store'
 import { appInfoSelector } from 'uiSrc/slices/app/info'
+import { keycloakAuthSelector } from 'uiSrc/slices/auth/keycloak'
 import { removePagePlaceholder } from 'uiSrc/utils'
 import MonacoLanguages from 'uiSrc/components/monaco-laguages'
 import AppInit from 'uiSrc/components/init/AppInit'
@@ -24,6 +25,7 @@ import MonacoEnvironmentInitializer from './components/MonacoEnvironmentInitiali
 import GlobalDialogs from './components/global-dialogs'
 import NotFoundErrorPage from './pages/not-found-error/NotFoundErrorPage'
 import KeycloakCallbackPage from './pages/keycloak-callback/KeycloakCallbackPage'
+import KeycloakLoginPage from './pages/keycloak-login/KeycloakLoginPage'
 
 import themeDark from './styles/themes/dark_theme/darkTheme.scss?inline'
 import themeLight from './styles/themes/light_theme/lightTheme.scss?inline'
@@ -45,6 +47,8 @@ const AppWrapper = ({ children }: { children?: ReactElement[] }) => (
 )
 const App = ({ children }: { children?: ReactElement[] }) => {
   const { loading: serverLoading } = useSelector(appInfoSelector)
+  const { isEnabled: isKeycloakEnabled, isAuthenticated: isKeycloakAuthenticated } =
+    useSelector(keycloakAuthSelector)
   useEffect(() => {
     if (!serverLoading) {
       removePagePlaceholder()
@@ -62,24 +66,35 @@ const App = ({ children }: { children?: ReactElement[] }) => {
           component={KeycloakCallbackPage}
         />
         <Route
+          exact
+          path="/keycloak-login"
+          component={KeycloakLoginPage}
+        />
+        <Route
           path="*"
-          render={() => (
-            <>
-              <Page className="main">
-                <GlobalDialogs />
-                <GlobalSubscriptions />
-                <NavigationMenu />
-                <PageBody component="main">
-                  <MainComponent />
-                </PageBody>
-              </Page>
-              <Notifications />
-              <Config />
-              <ShortcutsFlyout />
-              <MonacoLanguages />
-              {children}
-            </>
-          )}
+          render={() => {
+            if (isKeycloakEnabled && !isKeycloakAuthenticated) {
+              return <Redirect to="/keycloak-login" />
+            }
+
+            return (
+              <>
+                <Page className="main">
+                  <GlobalDialogs />
+                  <GlobalSubscriptions />
+                  <NavigationMenu />
+                  <PageBody component="main">
+                    <MainComponent />
+                  </PageBody>
+                </Page>
+                <Notifications />
+                <Config />
+                <ShortcutsFlyout />
+                <MonacoLanguages />
+                {children}
+              </>
+            )
+          }}
         />
       </Switch>
     </div>
