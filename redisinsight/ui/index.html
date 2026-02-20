@@ -23,6 +23,18 @@
       if (RIPROXYPATH.startsWith('__') || RIPROXYPATH.endsWith('__')) {
         window.__RI_PROXY_PATH__ = undefined;
       }
+
+      // Keycloak OIDC configuration injected at runtime by the server
+      window.__RI_KEYCLOAK_URL__ = '__RI_KEYCLOAK_URL__';
+      window.__RI_KEYCLOAK_REALM__ = '__RI_KEYCLOAK_REALM__';
+      window.__RI_KEYCLOAK_CLIENT_ID__ = '__RI_KEYCLOAK_CLIENT_ID__';
+
+      // Clear placeholder values that were not replaced by the server
+      ['__RI_KEYCLOAK_URL__', '__RI_KEYCLOAK_REALM__', '__RI_KEYCLOAK_CLIENT_ID__'].forEach(function(k) {
+        if (window[k] && (window[k].startsWith('__') || window[k].endsWith('__'))) {
+          window[k] = undefined;
+        }
+      });
     </script>
 
     <style>
