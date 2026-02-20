@@ -1,5 +1,6 @@
 /* eslint-disable react/no-this-in-sfc */
 import React from 'react'
+import { useSelector } from 'react-redux'
 
 import { FeatureFlags } from 'uiSrc/constants'
 import { EXTERNAL_LINKS } from 'uiSrc/constants/links'
@@ -15,10 +16,12 @@ import {
   SideBarItemIcon,
 } from 'uiSrc/components/base/layout/sidebar'
 import { GithubIcon } from 'uiSrc/components/base/icons'
+import { keycloakAuthSelector } from 'uiSrc/slices/auth/keycloak'
 import { INavigations } from './navigation.types'
 import CreateCloud from './components/create-cloud'
 import HelpMenu from './components/help-menu/HelpMenu'
 import NotificationMenu from './components/notifications-center'
+import KeycloakUserMenu from './components/keycloak-user-menu/KeycloakUserMenu'
 
 import { RedisLogo } from './components/redis-logo/RedisLogo'
 import { useNavigation } from './hooks/useNavigation'
@@ -27,6 +30,10 @@ import styles from './styles.module.scss'
 
 const NavigationMenu = () => {
   const { isRdiWorkspace, publicRoutes, highlightedPages } = useNavigation()
+  const {
+    isEnabled: isKeycloakEnabled,
+    isAuthenticated: isKeycloakAuthenticated,
+  } = useSelector(keycloakAuthSelector)
 
   const renderPublicNavItem = (nav: INavigations) => {
     const fragment = (
@@ -84,6 +91,13 @@ const NavigationMenu = () => {
         </FeatureFlagComponent>
 
         {publicRoutes.map(renderPublicNavItem)}
+
+        {isKeycloakEnabled && isKeycloakAuthenticated && (
+          <>
+            <SideBarDivider data-testid="keycloak-user-divider" />
+            <KeycloakUserMenu />
+          </>
+        )}
 
         <FeatureFlagComponent name={FeatureFlags.envDependent} enabledByDefault>
           <SideBarDivider data-testid="github-repo-divider-default" />
